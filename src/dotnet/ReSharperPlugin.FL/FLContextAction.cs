@@ -43,21 +43,15 @@ public class FLContextAction : ContextActionBase
                     dialogContent: textBox = BeControls.GetTextBox(lt),
                     title: "title",
                     id: "Fl-id")
-                .WithOkButton(lt, () => MessageBox.ShowInfo($"Okay {textBox.GetText()}"))
+                .WithOkButton(lt, () =>
+                {
+                    MessageBox.ShowInfo($"Okay {textBox.GetText()}");
+                })
                 .WithCancelButton(lt),
             parentLifetime: Lifetime.Eternal);
 
-        return textControl =>
+        return _ =>
         {
-            int caretOffset = _provider.CaretOffset;
-            string generatedGuid = Guid.NewGuid().ToString().ToUpper();
-            string textToInsert = $"\"{generatedGuid}\";";
-        
-            using (WriteLockCookie.Create())
-            {
-                textControl.Document.InsertText(caretOffset, textToInsert);
-                textControl.Caret.MoveTo(caretOffset + textToInsert.Length, CaretVisualPlacement.DontScrollIfVisible);
-            }
         };
     }
 
