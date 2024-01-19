@@ -38,44 +38,31 @@ public class FLContextAction : ContextActionBase
         
         var dialogHost = solution.GetComponent<IDialogHost>();
 
-        var code = string.Empty;
-        BeTextControl inputTextControl;
-        BeTextControl codeTextControl;
+        BeTextControl testCaseTextControl;
 
-        dialogHost.Show(
-            getDialog: lt => BeControls.GetDialog(
-                    dialogContent: inputTextControl = BeControls.GetTextControl(isReadonly:false, id : "input"),
-                    title: "input",
-                    id: "input")
-                .WithOkButton(lt, () =>
-                {
-                    var input = inputTextControl.Text.Value;
-
-                    var testCases = ExtractTestCases(input).ToList();
-
-                    var faultLocalizationRunner = new FaultLocalizationRunner(testCases, code);
-
-                    var faultLocalizationReport = faultLocalizationRunner.GetFaultLocalizationReport();
-                    
-                    MessageBox.ShowInfo(faultLocalizationReport);
-                })
-                .WithCancelButton(lt),
-            parentLifetime: Lifetime.Eternal);
-        
-        dialogHost.Show(
-            getDialog: lt => BeControls.GetDialog(
-                    dialogContent: codeTextControl = BeControls.GetTextControl(isReadonly:false, id : "code"),
-                    title: "code",
-                    id: "code")
-                .WithOkButton(lt, () =>
-                {
-                    code = codeTextControl.Text.Value;
-                })
-                .WithCancelButton(lt),
-            parentLifetime: Lifetime.Eternal);
-
-        return _ =>
+        return textControl =>
         {
+            var codeContent = textControl.Document.GetText();
+            
+            dialogHost.Show(
+                getDialog: lt => BeControls.GetDialog(
+                        dialogContent: testCaseTextControl = BeControls.GetTextControl(isReadonly:false, id : "testCase"),
+                        title: "Test Case",
+                        id: "testCase")
+                    .WithOkButton(lt, () =>
+                    {
+                        var input = testCaseTextControl.Text.Value;
+
+                        var testCases = ExtractTestCases(input).ToList();
+
+                        var faultLocalizationRunner = new FaultLocalizationRunner(testCases, codeContent);
+
+                        var faultLocalizationReport = faultLocalizationRunner.GetFaultLocalizationReport();
+                    
+                        MessageBox.ShowInfo(faultLocalizationReport);
+                    })
+                    .WithCancelButton(lt),
+                parentLifetime: Lifetime.Eternal);
         };
     }
 
