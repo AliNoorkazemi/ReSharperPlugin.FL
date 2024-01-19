@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ReSharperPlugin.FL.Models;
+﻿using ReSharperPlugin.FL.Models;
 
 namespace ReSharperPlugin.FL.Algorithms;
 
-public class MuseAgent
+public class MuseAgent : BaseAgent
 {
-    private readonly Dictionary<string, double> _linesRanks = new();
-
     public void ExecuteLineRanks(LineExecutionDataSet dataSet, int totalFailing, int totalSucceeding)
     {
         foreach (var lineExecutionData in dataSet.LineExecutions)
@@ -33,22 +28,5 @@ public class MuseAgent
         }
 
         return lineFailing - totalFailing / totalSucceeding * lineSucceeding;
-    }
-    
-    public IReadOnlyCollection<string> GetSuspiciousLines()
-    {
-        var sortedDictionary = _linesRanks.OrderByDescending(pair => pair.Value).ToList();
-
-        if (!sortedDictionary.Any())
-        {
-            return Array.Empty<string>();
-        }
-
-        var highestValue = sortedDictionary.First().Value;
-
-        return sortedDictionary
-            .Where(pair => Math.Abs(pair.Value - highestValue) < 0.000001)
-            .Select(pair => pair.Key)
-            .ToList();
     }
 }

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using ReSharperPlugin.FL.Models;
 
 namespace ReSharperPlugin.FL.Algorithms;
 
-public class JacCubeAgent
+public class JacCubeAgent : BaseAgent
 {
-    private readonly Dictionary<string, double> _linesRanks = new();
-
     public void ExecuteLineRanks(LineExecutionDataSet dataSet, int totalFailing)
     {
         foreach (var lineExecutionData in dataSet.LineExecutions)
@@ -31,22 +27,5 @@ public class JacCubeAgent
     private static double Cbrt(double num)
     {
         return Math.Pow(num, (double)1 / 3);
-    }
-    
-    public IReadOnlyCollection<string> GetSuspiciousLines()
-    {
-        var sortedDictionary = _linesRanks.OrderByDescending(pair => pair.Value).ToList();
-
-        if (!sortedDictionary.Any())
-        {
-            return Array.Empty<string>();
-        }
-
-        var highestValue = sortedDictionary.First().Value;
-
-        return sortedDictionary
-            .Where(pair => Math.Abs(pair.Value - highestValue) < 0.000001)
-            .Select(pair => pair.Key)
-            .ToList();
     }
 }
