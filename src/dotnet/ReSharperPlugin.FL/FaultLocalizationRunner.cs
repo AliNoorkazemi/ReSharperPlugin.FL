@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using ReSharperPlugin.FL.Algorithms;
 using ReSharperPlugin.FL.Compilation;
 using ReSharperPlugin.FL.Instrumentation;

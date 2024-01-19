@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using JetBrains.Application.Progress;
 using JetBrains.IDE.UI;
@@ -13,8 +12,6 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.Rider.Model.UIAutomation;
 using JetBrains.TextControl;
 using JetBrains.Util;
-using ReSharperPlugin.FL.Compilation;
-using ReSharperPlugin.FL.Instrumentation;
 using ReSharperPlugin.FL.Models;
 
 namespace ReSharperPlugin.FL;
