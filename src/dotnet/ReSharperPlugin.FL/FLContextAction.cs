@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using JetBrains.Application.Progress;
 using JetBrains.IDE.UI;
 using JetBrains.IDE.UI.Extensions;
@@ -13,6 +15,7 @@ using JetBrains.TextControl;
 using JetBrains.Util;
 using ReSharperPlugin.FL.Compilation;
 using ReSharperPlugin.FL.Instrumentation;
+using ReSharperPlugin.FL.Models;
 
 namespace ReSharperPlugin.FL;
 
@@ -51,8 +54,13 @@ public class FLContextAction : ContextActionBase
                 {
                     var input = inputTextControl.Text.Value;
 
-                    var output = ExecuteCode(code, input);
-                    MessageBox.ShowInfo(output);
+                    var testCases = ExtractTestCases(input).ToList();
+
+                    var faultLocalizationRunner = new FaultLocalizationRunner(testCases, code);
+
+                    var faultLocalizationReport = faultLocalizationRunner.GetFaultLocalizationReport();
+                    
+                    MessageBox.ShowInfo(faultLocalizationReport);
                 })
                 .WithCancelButton(lt),
             parentLifetime: Lifetime.Eternal);
@@ -74,28 +82,23 @@ public class FLContextAction : ContextActionBase
         };
     }
 
-    private static string ExecuteCode(string code, string input)
+    private static IEnumerable<TestCase> ExtractTestCases(string input)
     {
-        var compiler = new Compiler();
-        var emitResult = compiler.Compile(code);
+        var testCases = input.Split(new[] { "\n#$#\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-        if (emitResult.Success)
+        foreach (var testCase in testCases)
         {
-            var outputWriter = new StringWriter();
-            Console.SetOut(outputWriter);
+            var outputIndex = testCase.IndexOf("output :", StringComparison.InvariantCultureIgnoreCase);
             
-            var runSuccessfully = compiler.Run(input);
+            var inputPart = testCase.Substring(7, outputIndex - 7).Trim();
+            var outputPart = testCase[(outputIndex + 8)..].Trim();
 
-            if (runSuccessfully)
+            yield return new TestCase
             {
-                var outputConsole = outputWriter.ToString();
-                return InstrumentFactory.GetActualOutput(outputConsole);
-            }
-
-            return "RunTime error";
+                Input = inputPart,
+                Output = outputPart
+            };
         }
-
-        return "Compile error";
     }
 
     public override string Text => "FL";

@@ -49,10 +49,10 @@ public class Ample2Agent
             return Array.Empty<string>();
         }
 
-        var highestValues = sortedDictionary.Select(v => v.Value).Distinct().Take(3).ToArray();
+        var highestValue = sortedDictionary.First().Value;
 
         return sortedDictionary
-            .Where(pair => highestValues.Any(highestValue => Math.Abs(pair.Value - highestValue) < 0.000001))
+            .Where(pair => Math.Abs(pair.Value - highestValue) < 0.000001)
             .Select(pair => pair.Key)
             .ToList();
     }
