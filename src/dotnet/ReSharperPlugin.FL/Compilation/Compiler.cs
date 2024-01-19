@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -65,11 +66,15 @@ public class Compiler : IDisposable
 
     private static string? GetNameSpace(string originalCode)
     {
-        var lines = originalCode.Split('\r').ToList();
+        var lines = originalCode.Split('\n').ToList();
 
         var namespaceLine = lines.FirstOrDefault(l => l.Contains("namespace"));
 
-        return namespaceLine?.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ElementAt(1);
+        return namespaceLine?
+            .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+            .ElementAt(1)
+            .Split(new []{';'}, StringSplitOptions.RemoveEmptyEntries)
+            .ElementAt(0);
     }
 
     private static MetadataReference[] GetMetadataReferences()
@@ -79,6 +84,9 @@ public class Compiler : IDisposable
             MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Console).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(IEnumerable<>).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(Queue<>).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(Convert).Assembly.Location),
             MetadataReference.CreateFromFile(
                 typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location),
             MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location),
@@ -112,10 +120,8 @@ public class Compiler : IDisposable
                 return false;
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            var t = 2;
-
             return false;
         }
     }

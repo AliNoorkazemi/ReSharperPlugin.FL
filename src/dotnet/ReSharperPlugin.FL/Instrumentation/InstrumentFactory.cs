@@ -11,7 +11,7 @@ public static class InstrumentFactory
 
     public static string ReturnInstrumentedCode(string originalCode)
     {
-        var originalLines = originalCode.Split('\r').ToList();
+        var originalLines = originalCode.Split('\n').ToList();
         var newLines = new List<string>(originalLines.Count);
 
         for (var i = 0; i < originalLines.Count ; i++)
@@ -47,7 +47,7 @@ public static class InstrumentFactory
     private static IEnumerable<string> NoneInstrumentedWords => new[]
     {
         "using", "public", "static", "private", "protected", "internal", "class", "interface", "try", "catch", "const",
-        "finally", "do", "struct", "#region", "#endregion", "enum", "else"
+        "finally", "do", "struct", "#region", "#endregion", "enum", "else", "namespace"
     };
 
     private static bool IsEndWithSemicolon(string originalLine)
