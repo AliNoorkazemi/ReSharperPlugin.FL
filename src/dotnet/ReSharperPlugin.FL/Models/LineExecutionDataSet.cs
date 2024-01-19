@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ReSharperPlugin.FL.Algorithms;
+namespace ReSharperPlugin.FL.Models;
 
 public class LineExecutionDataSet
 {
@@ -40,11 +40,4 @@ public class LineExecutionDataSet
             }
         }
     }
-}
-
-public class LineRecord
-{
-    public int Failing { get; set; }
-
-    public int Succeeding { get; set; }
 }

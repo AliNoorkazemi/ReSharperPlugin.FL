@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ReSharperPlugin.FL.Models;
 
 namespace ReSharperPlugin.FL.Algorithms;
 
